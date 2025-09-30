@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "222933278549",
+    "project_id": "expensetracker-c9199",
+    "storage_bucket": "expensetracker-c9199.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:222933278549:android:f2c297561c54bd319059dc",
+        "android_client_info": {
+          "package_name": "com.tada.expensestracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8e-cRIENS7BOz0jPrAXfhZmvBxMA8LYk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

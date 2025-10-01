@@ -1,0 +1,125 @@
+package com.tada.expensestracker.data.repository
+
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.tada.expensestracker.data.model.Transaction
+import kotlinx.coroutines.tasks.await
+import java.text.SimpleDateFormat
+import java.util.*
+
+class FirebaseTransactionRepository {
+    
+    private val firestore = FirebaseFirestore.getInstance()
+    private val transactionsCollection = firestore.collection("transactions")
+    
+    suspend fun addTransaction(transaction: Transaction): Result<String> {
+        return try {
+            val documentRef = transactionsCollection.add(transaction).await()
+            Result.success(documentRef.id)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    
+    suspend fun getTransactionsByMonth(month: Int, year: Int): Result<List<Transaction>> {
+        return try {
+            // Create date range for the month
+            val calendar = Calendar.getInstance()
+            calendar.set(year, month, 1, 0, 0, 0)
+            calendar.set(Calendar.MILLISECOND, 0)
+            val startDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.time)
+            
+            calendar.add(Calendar.MONTH, 1)
+            calendar.add(Calendar.DAY_OF_MONTH, -1)
+            val endDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.time)
+            
+            val querySnapshot = transactionsCollection
+                .whereGreaterThanOrEqualTo("date", startDate)
+                .whereLessThanOrEqualTo("date", endDate)
+                .orderBy("date", Query.Direction.DESCENDING)
+                .get()
+                .await()
+            
+            val transactions = querySnapshot.documents.mapNotNull { document ->
+                val transaction = document.toObject(Transaction::class.java)
+                transaction?.copy(id = document.id)
+            }
+            
+            Result.success(transactions)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    
+    suspend fun getAllTransactions(): Result<List<Transaction>> {
+        return try {
+            val querySnapshot = transactionsCollection
+                .orderBy("date", Query.Direction.DESCENDING)
+                .get()
+                .await()
+            
+            val transactions = querySnapshot.documents.mapNotNull { document ->
+                val transaction = document.toObject(Transaction::class.java)
+                transaction?.copy(id = document.id)
+            }
+            
+            Result.success(transactions)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    
+    suspend fun updateTransaction(transaction: Transaction): Result<Unit> {
+        return try {
+            transaction.id?.let { id ->
+                transactionsCollection.document(id).set(transaction).await()
+                Result.success(Unit)
+            } ?: Result.failure(Exception("Transaction ID is null"))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    
+    suspend fun deleteTransaction(transactionId: String): Result<Unit> {
+        return try {
+            transactionsCollection.document(transactionId).delete().await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    
+    // Get monthly summary (income, expense, balance)
+    suspend fun getMonthlySummary(month: Int, year: Int): Result<MonthlySummary> {
+        return try {
+            val transactionsResult = getTransactionsByMonth(month, year)
+            if (transactionsResult.isSuccess) {
+                val transactions = transactionsResult.getOrNull() ?: emptyList()
+                var totalIncome = 0.0
+                var totalExpense = 0.0
+                
+                transactions.forEach { transaction ->
+                    if (transaction.amount > 0) {
+                        totalIncome += transaction.amount
+                    } else {
+                        totalExpense += Math.abs(transaction.amount)
+                    }
+                }
+                
+                val balance = totalIncome - totalExpense
+                val summary = MonthlySummary(totalIncome, totalExpense, balance)
+                Result.success(summary)
+            } else {
+                Result.failure(transactionsResult.exceptionOrNull() ?: Exception("Unknown error"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+}
+
+data class MonthlySummary(
+    val totalIncome: Double,
+    val totalExpense: Double,
+    val balance: Double
+)

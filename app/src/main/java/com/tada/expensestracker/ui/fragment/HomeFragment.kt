@@ -60,7 +60,37 @@ class HomeFragment : Fragment() {
         setupDateSection()
         setupRecyclerView()
         setupFAB()
-        loadData()
+        
+        // Wait for authentication before loading data
+        ensureUserAuthenticated()
+    }
+    
+    private fun ensureUserAuthenticated() {
+        val app = requireActivity().application as ExpensesApp
+        if (!app.authManager.isUserSignedIn()) {
+            lifecycleScope.launch {
+                val result = app.authManager.signInAsDeviceUser(requireContext())
+                if (result.isSuccess) {
+                    android.util.Log.d("HomeFragment", "User authenticated: ${app.authManager.getCurrentUserId()}")
+                    loadData()
+                } else {
+                    android.util.Log.e("HomeFragment", "Authentication failed: ${result.exceptionOrNull()?.message}")
+                    // Show sample data if authentication fails
+                    loadSampleData()
+                }
+            }
+        } else {
+            android.util.Log.d("HomeFragment", "User already authenticated: ${app.authManager.getCurrentUserId()}")
+            loadData()
+        }
+    }
+
+    private fun loadSampleData() {
+        val sampleTransactions = getSampleTransactions()
+        val filteredTransactions = filterTransactionsByMonth(sampleTransactions, selectedMonth, selectedYear)
+        updateSummary(filteredTransactions)
+        transactionAdapter.updateTransactions(filteredTransactions)
+        Toast.makeText(context, "Using sample data (authentication failed)", Toast.LENGTH_SHORT).show()
     }
 
     private fun initViews(view: View) {

@@ -1,5 +1,6 @@
 package com.tada.expensestracker.data.repository
 
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.tada.expensestracker.data.model.Transaction
@@ -10,11 +11,19 @@ import java.util.*
 class FirebaseTransactionRepository {
     
     private val firestore = FirebaseFirestore.getInstance()
-    private val transactionsCollection = firestore.collection("transactions")
+    private val auth = FirebaseAuth.getInstance()
+    
+    // Get user-specific collection path
+    private fun getUserTransactionsCollection() = 
+        firestore.collection("users").document(getCurrentUserId()).collection("transactions")
+    
+    private fun getCurrentUserId(): String {
+        return auth.currentUser?.uid ?: "anonymous_user"
+    }
     
     suspend fun addTransaction(transaction: Transaction): Result<String> {
         return try {
-            val documentRef = transactionsCollection.add(transaction).await()
+            val documentRef = getUserTransactionsCollection().add(transaction).await()
             Result.success(documentRef.id)
         } catch (e: Exception) {
             Result.failure(e)
@@ -33,7 +42,7 @@ class FirebaseTransactionRepository {
             calendar.add(Calendar.DAY_OF_MONTH, -1)
             val endDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.time)
             
-            val querySnapshot = transactionsCollection
+            val querySnapshot = getUserTransactionsCollection()
                 .whereGreaterThanOrEqualTo("date", startDate)
                 .whereLessThanOrEqualTo("date", endDate)
                 .orderBy("date", Query.Direction.DESCENDING)
@@ -53,7 +62,7 @@ class FirebaseTransactionRepository {
     
     suspend fun getAllTransactions(): Result<List<Transaction>> {
         return try {
-            val querySnapshot = transactionsCollection
+            val querySnapshot = getUserTransactionsCollection()
                 .orderBy("date", Query.Direction.DESCENDING)
                 .get()
                 .await()
@@ -72,7 +81,7 @@ class FirebaseTransactionRepository {
     suspend fun updateTransaction(transaction: Transaction): Result<Unit> {
         return try {
             transaction.id?.let { id ->
-                transactionsCollection.document(id).set(transaction).await()
+                getUserTransactionsCollection().document(id).set(transaction).await()
                 Result.success(Unit)
             } ?: Result.failure(Exception("Transaction ID is null"))
         } catch (e: Exception) {
@@ -82,7 +91,7 @@ class FirebaseTransactionRepository {
     
     suspend fun deleteTransaction(transactionId: String): Result<Unit> {
         return try {
-            transactionsCollection.document(transactionId).delete().await()
+            getUserTransactionsCollection().document(transactionId).delete().await()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)

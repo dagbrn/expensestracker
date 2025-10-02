@@ -4,6 +4,9 @@ import android.content.Context
 import android.provider.Settings
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class AuthManager {
@@ -57,6 +60,24 @@ class AuthManager {
             }
         } catch (e: Exception) {
             Result.failure(e)
+        }
+    }
+    
+    // Method to ensure user is authenticated with callback
+    fun ensureUserAuthenticated(context: Context, callback: (String?) -> Unit) {
+        if (isUserSignedIn()) {
+            callback(getCurrentUserId())
+        } else {
+            // Use coroutine to handle async authentication
+            kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+                val result = signInAsDeviceUser(context)
+                if (result.isSuccess) {
+                    callback(getCurrentUserId())
+                } else {
+                    android.util.Log.e("AuthManager", "Authentication failed: ${result.exceptionOrNull()?.message}")
+                    callback(null)
+                }
+            }
         }
     }
 }

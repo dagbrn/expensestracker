@@ -10,7 +10,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.tada.expensestracker.R
 import com.tada.expensestracker.data.model.Transaction
-import com.tada.expensestracker.data.repository.FirebaseTransactionRepository
+import com.tada.expensestracker.data.repository.TransactionRepository
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -27,7 +27,7 @@ class AddTransactionActivity : AppCompatActivity() {
     private lateinit var etDate: TextInputEditText
     private lateinit var btnSave: MaterialButton
 
-    private val firebaseRepository = FirebaseTransactionRepository()
+    private val firebaseRepository = TransactionRepository()
     private val calendar = Calendar.getInstance()
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 

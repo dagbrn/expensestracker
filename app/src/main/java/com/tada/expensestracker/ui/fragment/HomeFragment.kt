@@ -18,7 +18,7 @@ import com.tada.expensestracker.R
 import com.tada.expensestracker.ExpensesApp
 import com.tada.expensestracker.ui.adapter.TransactionAdapter
 import com.tada.expensestracker.data.model.Transaction
-import com.tada.expensestracker.data.repository.FirebaseTransactionRepository
+import com.tada.expensestracker.data.repository.TransactionRepository
 import com.tada.expensestracker.ui.activity.AddTransactionActivity
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
@@ -39,7 +39,7 @@ class HomeFragment : Fragment() {
     private lateinit var transactionAdapter: TransactionAdapter
     private val calendar = Calendar.getInstance()
     private val numberFormat = NumberFormat.getCurrencyInstance(Locale("id", "ID"))
-    private val firebaseRepository = FirebaseTransactionRepository()
+    private val firebaseRepository = TransactionRepository()
     
     // Current selected date for filtering and display
     private var selectedDay: Int = calendar.get(Calendar.DAY_OF_MONTH)

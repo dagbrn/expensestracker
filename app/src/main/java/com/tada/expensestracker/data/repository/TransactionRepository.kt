@@ -37,12 +37,11 @@ class TransactionRepository {
             val calendar = Calendar.getInstance()
             calendar.set(year, month, 1, 0, 0, 0)
             calendar.set(Calendar.MILLISECOND, 0)
-            val startDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.time)
-            
+            val startDate = calendar.timeInMillis
             calendar.add(Calendar.MONTH, 1)
             calendar.add(Calendar.DAY_OF_MONTH, -1)
-            val endDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.time)
-            
+            val endDate = calendar.timeInMillis
+
             val querySnapshot = getUserTransactionsCollection()
                 .whereGreaterThanOrEqualTo("date", startDate)
                 .whereLessThanOrEqualTo("date", endDate)

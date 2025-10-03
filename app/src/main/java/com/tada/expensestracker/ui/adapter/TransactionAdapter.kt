@@ -48,7 +48,8 @@ class TransactionAdapter(private var transactions: List<TransactionWithId>) :
         
         holder.tvName.text = transactionWithId.note.ifEmpty { "Transaction" }
         holder.tvCategory.text = transactionWithId.type
-        
+        holder.ivCategoryIcon.setImageResource(getCategoryIcon(transactionWithId.type))
+
         // Format amount
         val formattedAmount = if (transactionWithId.amount >= 0) {
             "+ Rp ${String.format("%,.0f", transactionWithId.amount)}"

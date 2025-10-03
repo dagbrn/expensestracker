@@ -17,5 +17,5 @@ data class TransactionWithId(
     val type: String get() = transaction.type
     val amount: Double get() = transaction.amount
     val note: String get() = transaction.note
-    val date: String get() = transaction.date
+    val date: Long get() = transaction.date
 }

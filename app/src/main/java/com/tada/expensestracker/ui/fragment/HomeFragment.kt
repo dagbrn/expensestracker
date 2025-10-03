@@ -201,23 +201,23 @@ class HomeFragment : Fragment() {
     private fun filterTransactionsByMonth(transactions: List<TransactionWithId>, month: Int, year: Int): List<TransactionWithId> {
         return transactions.filter { transactionWithId ->
             // Parse date string (assuming format "yyyy-MM-dd")
-            val transactionDate = parseDate(transactionWithId.date)
+            val transactionDate = Date(transactionWithId.date)
             val transactionCal = Calendar.getInstance()
-            transactionCal.time = formattedDate
+            transactionCal.time = transactionDate
             
             transactionCal.get(Calendar.MONTH) == month && 
             transactionCal.get(Calendar.YEAR) == year
         }
     }
 
-    private fun parseDate(dateString: String): Date {
-        return try {
-            val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            format.parse(dateString) ?: Date()
-        } catch (e: Exception) {
-            Date()
-        }
-    }
+//    private fun parseDate(dateString: Long): Date {
+//        return try {
+//            val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+//            format.parse(dateString) ?: Date()
+//        } catch (e: Exception) {
+//            Date()
+//        }
+//    }
 
     private fun updateSummary(transactions: List<TransactionWithId>) {
         var totalIncome = 0.0
@@ -245,20 +245,20 @@ class HomeFragment : Fragment() {
     private fun getSampleTransactions(): List<TransactionWithId> {
         val sampleData = listOf(
             // October 2025 transactions
-            Transaction(id = "1", type = "Income", amount = 5000000.0, note = "Gaji", date = 1758789312345),
-            Transaction(id = "2", type = "Makanan", amount = -25000.0, note = "Makan Siang", date = 1758789312345),
-            Transaction(id = "3", type = "Transportasi", amount = -50000.0, note = "Bensin", date = 1758789312345),
-            Transaction(id = "4", type = "Income", amount = 500000.0, note = "Bonus", date = 1758789312345),
-            Transaction(id = "5", type = "Kebutuhan", amount = -350000.0, note = "Belanja Bulanan", date = 1758789312345),
-            
+            Transaction(type = "Income", amount = 5000000.0, note = "Gaji", date = 1758789312345),
+            Transaction(type = "Makanan", amount = -25000.0, note = "Makan Siang", date = 1758789312345),
+            Transaction(type = "Transportasi", amount = -50000.0, note = "Bensin", date = 1758789312345),
+            Transaction(type = "Income", amount = 500000.0, note = "Bonus", date = 1758789312345),
+            Transaction(type = "Kebutuhan", amount = -350000.0, note = "Belanja Bulanan", date = 1758789312345),
+
             // September 2025 transactions (for testing month filter)
-            Transaction(id = "6", type = "Income", amount = 4800000.0, note = "Gaji", date = 1758789312345),
-            Transaction(id = "7", type = "Makanan", amount = -180000.0, note = "Groceries", date = 1758789312345),
-            Transaction(id = "8", type = "Hiburan", amount = -150000.0, note = "Movie", date = 1758789312345),
-            
+            Transaction(type = "Income", amount = 4800000.0, note = "Gaji", date = 1758789312345),
+            Transaction(type = "Makanan", amount = -180000.0, note = "Groceries", date = 1758789312345),
+            Transaction(type = "Hiburan", amount = -150000.0, note = "Movie", date = 1758789312345),
+
             // November 2025 transactions (future month for testing)
-            Transaction(id = "9", type = "Income", amount = 5200000.0, note = "Gaji", date = 1758789312345),
-            Transaction(id = "10", type = "Investasi", amount = -1000000.0, note = "Saham", date = 1758789312345)
+            Transaction(type = "Income", amount = 5200000.0, note = "Gaji", date = 1758789312345),
+            Transaction(type = "Investasi", amount = -1000000.0, note = "Saham", date = 1758789312345)
         )
 
         return sampleData.mapIndexed { index, transaction ->

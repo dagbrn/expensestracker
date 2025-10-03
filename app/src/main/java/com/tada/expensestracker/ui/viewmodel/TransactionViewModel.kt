@@ -6,16 +6,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tada.expensestracker.data.model.Transaction
-import com.tada.expensestracker.data.repository.FirebaseTransactionRepository
+import com.tada.expensestracker.data.model.TransactionWithId
+import com.tada.expensestracker.data.repository.TransactionRepository
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class TransactionViewModel : ViewModel() {
 
-    private val repository = FirebaseTransactionRepository()
+    private val repository = TransactionRepository()
 
-    private val _transactions = MutableLiveData<List<Transaction>?>()
-    val transactions: LiveData<List<Transaction>?> = _transactions
+    private val _transactions = MutableLiveData<List<TransactionWithId>?>()
+    val transactions: LiveData<List<TransactionWithId>?> = _transactions
 
     // Menyimpan bulan dan tahun yang sedang dipilih
     var selectedMonth: Int = 0

@@ -174,8 +174,9 @@ class HomeFragment : Fragment() {
                 
                 if (result.isSuccess) {
                     val transactions = result.getOrNull() ?: emptyList()
-                    updateSummary(transactions)
-                    transactionAdapter.updateTransactions(transactions)
+                    val sortedTransaction = transactions.sortedByDescending { it.date }
+                    updateSummary(sortedTransaction)
+                    transactionAdapter.updateTransactions(sortedTransaction)
                 } else {
                     // Fallback to sample data if Firebase fails
                     val sampleTransactions = getSampleTransactions()
@@ -200,23 +201,24 @@ class HomeFragment : Fragment() {
     private fun filterTransactionsByMonth(transactions: List<Transaction>, month: Int, year: Int): List<Transaction> {
         return transactions.filter { transaction ->
             // Parse date string (assuming format "yyyy-MM-dd")
-            val transactionDate = parseDate(transaction.date)
+            val formattedDate = Date(transaction.date)
             val transactionCal = Calendar.getInstance()
-            transactionCal.time = transactionDate
+            transactionCal.time = formattedDate
             
             transactionCal.get(Calendar.MONTH) == month && 
             transactionCal.get(Calendar.YEAR) == year
         }
     }
 
-    private fun parseDate(dateString: String): Date {
-        return try {
-            val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            format.parse(dateString) ?: Date()
-        } catch (e: Exception) {
-            Date()
-        }
-    }
+//    private fun parseDate(dateString: Long): Date {
+//        return try {
+//            val format = SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault())
+//            val date = Date(dateString)
+//            format.parse(date) ?: Date()
+//        } catch (e: Exception) {
+//            Date()
+//        }
+//    }
 
     private fun updateSummary(transactions: List<Transaction>) {
         var totalIncome = 0.0
@@ -244,20 +246,20 @@ class HomeFragment : Fragment() {
     private fun getSampleTransactions(): List<Transaction> {
         return listOf(
             // October 2025 transactions
-            Transaction(id = "1", type = "Income", amount = 5000000.0, note = "Gaji", date = "2025-10-01"),
-            Transaction(id = "2", type = "Makanan", amount = -25000.0, note = "Makan Siang", date = "2025-10-01"),
-            Transaction(id = "3", type = "Transportasi", amount = -50000.0, note = "Bensin", date = "2025-10-05"),
-            Transaction(id = "4", type = "Income", amount = 500000.0, note = "Bonus", date = "2025-10-10"),
-            Transaction(id = "5", type = "Kebutuhan", amount = -350000.0, note = "Belanja Bulanan", date = "2025-10-15"),
+            Transaction(id = "1", type = "Income", amount = 5000000.0, note = "Gaji", date = 1758789312345),
+            Transaction(id = "2", type = "Makanan", amount = -25000.0, note = "Makan Siang", date = 1758789312345),
+            Transaction(id = "3", type = "Transportasi", amount = -50000.0, note = "Bensin", date = 1758789312345),
+            Transaction(id = "4", type = "Income", amount = 500000.0, note = "Bonus", date = 1758789312345),
+            Transaction(id = "5", type = "Kebutuhan", amount = -350000.0, note = "Belanja Bulanan", date = 1758789312345),
             
             // September 2025 transactions (for testing month filter)
-            Transaction(id = "6", type = "Income", amount = 4800000.0, note = "Gaji", date = "2025-09-01"),
-            Transaction(id = "7", type = "Makanan", amount = -180000.0, note = "Groceries", date = "2025-09-05"),
-            Transaction(id = "8", type = "Hiburan", amount = -150000.0, note = "Movie", date = "2025-09-10"),
+            Transaction(id = "6", type = "Income", amount = 4800000.0, note = "Gaji", date = 1758789312345),
+            Transaction(id = "7", type = "Makanan", amount = -180000.0, note = "Groceries", date = 1758789312345),
+            Transaction(id = "8", type = "Hiburan", amount = -150000.0, note = "Movie", date = 1758789312345),
             
             // November 2025 transactions (future month for testing)
-            Transaction(id = "9", type = "Income", amount = 5200000.0, note = "Gaji", date = "2025-11-01"),
-            Transaction(id = "10", type = "Investasi", amount = -1000000.0, note = "Saham", date = "2025-11-05")
+            Transaction(id = "9", type = "Income", amount = 5200000.0, note = "Gaji", date = 1758789312345),
+            Transaction(id = "10", type = "Investasi", amount = -1000000.0, note = "Saham", date = 1758789312345)
         )
     }
 

@@ -125,7 +125,7 @@ class AddTransactionActivity : AppCompatActivity() {
         val amountText = etAmount.text.toString().trim()
         val category = etCategory.text.toString().trim()
         val note = etNote.text.toString().trim()
-        val date = etDate.text.toString().trim()
+        val dateText = etDate.text.toString().trim()
 
         // Validation
         if (amountText.isEmpty()) {
@@ -145,7 +145,9 @@ class AddTransactionActivity : AppCompatActivity() {
 
         try {
             var amount = amountText.toDouble()
-            
+            val parseDate = dateFormat.parse(dateText)
+            val date: Long = parseDate?.time ?: 0L
+
             // Make amount negative for expenses
             if (rbExpense.isChecked) {
                 amount = -Math.abs(amount)

@@ -29,55 +29,55 @@ class FirebaseTransactionRepository {
             Result.failure(e)
         }
     }
-    
+
     suspend fun getTransactionsByMonth(month: Int, year: Int): Result<List<Transaction>> {
         return try {
-            // Create date range for the month
             val calendar = Calendar.getInstance()
             calendar.set(year, month, 1, 0, 0, 0)
             calendar.set(Calendar.MILLISECOND, 0)
-            val startDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.time)
-            
+            val startDate = calendar.timeInMillis // Long
+
             calendar.add(Calendar.MONTH, 1)
-            calendar.add(Calendar.DAY_OF_MONTH, -1)
-            val endDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.time)
-            
+            calendar.add(Calendar.MILLISECOND, -1)
+            val endDate = calendar.timeInMillis // Long
+
             val querySnapshot = getUserTransactionsCollection()
                 .whereGreaterThanOrEqualTo("date", startDate)
                 .whereLessThanOrEqualTo("date", endDate)
                 .orderBy("date", Query.Direction.DESCENDING)
                 .get()
                 .await()
-            
+
             val transactions = querySnapshot.documents.mapNotNull { document ->
                 val transaction = document.toObject(Transaction::class.java)
                 transaction?.copy(id = document.id)
             }
-            
+
             Result.success(transactions)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
-    
+
+
     suspend fun getAllTransactions(): Result<List<Transaction>> {
         return try {
             val querySnapshot = getUserTransactionsCollection()
                 .orderBy("date", Query.Direction.DESCENDING)
                 .get()
                 .await()
-            
+
             val transactions = querySnapshot.documents.mapNotNull { document ->
                 val transaction = document.toObject(Transaction::class.java)
                 transaction?.copy(id = document.id)
             }
-            
+
             Result.success(transactions)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
-    
+
     suspend fun updateTransaction(transaction: Transaction): Result<Unit> {
         return try {
             transaction.id?.let { id ->
@@ -88,7 +88,7 @@ class FirebaseTransactionRepository {
             Result.failure(e)
         }
     }
-    
+
     suspend fun deleteTransaction(transactionId: String): Result<Unit> {
         return try {
             getUserTransactionsCollection().document(transactionId).delete().await()

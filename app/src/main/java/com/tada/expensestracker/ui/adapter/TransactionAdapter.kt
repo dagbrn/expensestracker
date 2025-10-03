@@ -6,9 +6,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.tada.expensestracker.R
-import com.tada.expensestracker.data.model.Transaction
+import com.tada.expensestracker.data.model.TransactionWithId
 
-class TransactionAdapter(private var transactions: List<Transaction>) : 
+class TransactionAdapter(private var transactions: List<TransactionWithId>) : 
     RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder>() {
 
     class TransactionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -24,22 +24,22 @@ class TransactionAdapter(private var transactions: List<Transaction>) :
     }
 
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
-        val transaction = transactions[position]
+        val transactionWithId = transactions[position]
         
-        holder.tvName.text = transaction.note.ifEmpty { "Transaction" }
-        holder.tvCategory.text = transaction.type
+        holder.tvName.text = transactionWithId.note.ifEmpty { "Transaction" }
+        holder.tvCategory.text = transactionWithId.type
         
         // Format amount
-        val formattedAmount = if (transaction.amount >= 0) {
-            "+ Rp ${String.format("%,.0f", transaction.amount)}"
+        val formattedAmount = if (transactionWithId.amount >= 0) {
+            "+ Rp ${String.format("%,.0f", transactionWithId.amount)}"
         } else {
-            "- Rp ${String.format("%,.0f", Math.abs(transaction.amount))}"
+            "- Rp ${String.format("%,.0f", Math.abs(transactionWithId.amount))}"
         }
         holder.tvAmount.text = formattedAmount
         
         // Set color based on transaction type
         val context = holder.itemView.context
-        if (transaction.amount >= 0) {
+        if (transactionWithId.amount >= 0) {
             holder.tvAmount.setTextColor(context.resources.getColor(android.R.color.holo_green_dark))
         } else {
             holder.tvAmount.setTextColor(context.resources.getColor(android.R.color.holo_red_dark))
@@ -48,7 +48,7 @@ class TransactionAdapter(private var transactions: List<Transaction>) :
 
     override fun getItemCount(): Int = transactions.size
 
-    fun updateTransactions(newTransactions: List<Transaction>) {
+    fun updateTransactions(newTransactions: List<TransactionWithId>) {
         transactions = newTransactions
         notifyDataSetChanged()
     }

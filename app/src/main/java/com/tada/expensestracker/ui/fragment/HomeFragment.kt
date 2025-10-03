@@ -18,6 +18,7 @@ import com.tada.expensestracker.R
 import com.tada.expensestracker.ExpensesApp
 import com.tada.expensestracker.ui.adapter.TransactionAdapter
 import com.tada.expensestracker.data.model.Transaction
+import com.tada.expensestracker.data.model.TransactionWithId
 import com.tada.expensestracker.data.repository.TransactionRepository
 import com.tada.expensestracker.ui.activity.AddTransactionActivity
 import kotlinx.coroutines.launch
@@ -197,10 +198,10 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun filterTransactionsByMonth(transactions: List<Transaction>, month: Int, year: Int): List<Transaction> {
-        return transactions.filter { transaction ->
+    private fun filterTransactionsByMonth(transactions: List<TransactionWithId>, month: Int, year: Int): List<TransactionWithId> {
+        return transactions.filter { transactionWithId ->
             // Parse date string (assuming format "yyyy-MM-dd")
-            val transactionDate = parseDate(transaction.date)
+            val transactionDate = parseDate(transactionWithId.date)
             val transactionCal = Calendar.getInstance()
             transactionCal.time = transactionDate
             
@@ -218,15 +219,15 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun updateSummary(transactions: List<Transaction>) {
+    private fun updateSummary(transactions: List<TransactionWithId>) {
         var totalIncome = 0.0
         var totalExpense = 0.0
         
-        transactions.forEach { transaction ->
-            if (transaction.amount > 0) {
-                totalIncome += transaction.amount
+        transactions.forEach { transactionWithId ->
+            if (transactionWithId.amount > 0) {
+                totalIncome += transactionWithId.amount
             } else {
-                totalExpense += Math.abs(transaction.amount)
+                totalExpense += Math.abs(transactionWithId.amount)
             }
         }
         
@@ -241,24 +242,28 @@ class HomeFragment : Fragment() {
         return "Rp ${String.format("%,.0f", amount)}"
     }
 
-    private fun getSampleTransactions(): List<Transaction> {
-        return listOf(
+    private fun getSampleTransactions(): List<TransactionWithId> {
+        val sampleData = listOf(
             // October 2025 transactions
-            Transaction(id = "1", type = "Income", amount = 5000000.0, note = "Gaji", date = "2025-10-01"),
-            Transaction(id = "2", type = "Makanan", amount = -25000.0, note = "Makan Siang", date = "2025-10-01"),
-            Transaction(id = "3", type = "Transportasi", amount = -50000.0, note = "Bensin", date = "2025-10-05"),
-            Transaction(id = "4", type = "Income", amount = 500000.0, note = "Bonus", date = "2025-10-10"),
-            Transaction(id = "5", type = "Kebutuhan", amount = -350000.0, note = "Belanja Bulanan", date = "2025-10-15"),
+            Transaction(type = "Income", amount = 5000000.0, note = "Gaji", date = "2025-10-01"),
+            Transaction(type = "Makanan", amount = -25000.0, note = "Makan Siang", date = "2025-10-01"),
+            Transaction(type = "Transportasi", amount = -50000.0, note = "Bensin", date = "2025-10-05"),
+            Transaction(type = "Income", amount = 500000.0, note = "Bonus", date = "2025-10-10"),
+            Transaction(type = "Kebutuhan", amount = -350000.0, note = "Belanja Bulanan", date = "2025-10-15"),
             
             // September 2025 transactions (for testing month filter)
-            Transaction(id = "6", type = "Income", amount = 4800000.0, note = "Gaji", date = "2025-09-01"),
-            Transaction(id = "7", type = "Makanan", amount = -180000.0, note = "Groceries", date = "2025-09-05"),
-            Transaction(id = "8", type = "Hiburan", amount = -150000.0, note = "Movie", date = "2025-09-10"),
+            Transaction(type = "Income", amount = 4800000.0, note = "Gaji", date = "2025-09-01"),
+            Transaction(type = "Makanan", amount = -180000.0, note = "Groceries", date = "2025-09-05"),
+            Transaction(type = "Hiburan", amount = -150000.0, note = "Movie", date = "2025-09-10"),
             
             // November 2025 transactions (future month for testing)
-            Transaction(id = "9", type = "Income", amount = 5200000.0, note = "Gaji", date = "2025-11-01"),
-            Transaction(id = "10", type = "Investasi", amount = -1000000.0, note = "Saham", date = "2025-11-05")
+            Transaction(type = "Income", amount = 5200000.0, note = "Gaji", date = "2025-11-01"),
+            Transaction(type = "Investasi", amount = -1000000.0, note = "Saham", date = "2025-11-05")
         )
+        
+        return sampleData.mapIndexed { index, transaction ->
+            TransactionWithId("sample_$index", transaction)
+        }
     }
 
     override fun onResume() {

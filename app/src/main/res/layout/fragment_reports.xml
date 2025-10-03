@@ -52,6 +52,15 @@
                     android:orientation="horizontal"
                     android:gravity="center_vertical">
 
+                    <ImageButton
+                        android:id="@+id/btnPreviousMonth"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="8dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@android:drawable/ic_media_previous"
+                        android:contentDescription="Previous Month"/>
+
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnDateRange"
                         android:layout_width="0dp"
@@ -62,15 +71,6 @@
                         style="@style/Widget.Material3.Button.OutlinedButton"
                         android:drawableStart="@android:drawable/ic_menu_month"
                         android:drawablePadding="8dp"/>
-
-                    <ImageButton
-                        android:id="@+id/btnPreviousMonth"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:layout_marginStart="8dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:src="@android:drawable/ic_media_previous"
-                        android:contentDescription="Previous Month"/>
 
                     <ImageButton
                         android:id="@+id/btnNextMonth"

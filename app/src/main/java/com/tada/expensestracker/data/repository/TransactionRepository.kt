@@ -4,6 +4,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.tada.expensestracker.data.model.Transaction
+import com.tada.expensestracker.data.model.TransactionWithId
 import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
 import java.util.*
@@ -30,7 +31,7 @@ class TransactionRepository {
         }
     }
     
-    suspend fun getTransactionsByMonth(month: Int, year: Int): Result<List<Transaction>> {
+    suspend fun getTransactionsByMonth(month: Int, year: Int): Result<List<TransactionWithId>> {
         return try {
             // Create date range for the month
             val calendar = Calendar.getInstance()
@@ -51,7 +52,7 @@ class TransactionRepository {
             
             val transactions = querySnapshot.documents.mapNotNull { document ->
                 val transaction = document.toObject(Transaction::class.java)
-                transaction?.copy(id = document.id)
+                transaction?.let { TransactionWithId(document.id, it) }
             }
             
             Result.success(transactions)
@@ -60,7 +61,7 @@ class TransactionRepository {
         }
     }
     
-    suspend fun getAllTransactions(): Result<List<Transaction>> {
+    suspend fun getAllTransactions(): Result<List<TransactionWithId>> {
         return try {
             val querySnapshot = getUserTransactionsCollection()
                 .orderBy("date", Query.Direction.DESCENDING)
@@ -69,7 +70,7 @@ class TransactionRepository {
             
             val transactions = querySnapshot.documents.mapNotNull { document ->
                 val transaction = document.toObject(Transaction::class.java)
-                transaction?.copy(id = document.id)
+                transaction?.let { TransactionWithId(document.id, it) }
             }
             
             Result.success(transactions)
@@ -78,12 +79,10 @@ class TransactionRepository {
         }
     }
     
-    suspend fun updateTransaction(transaction: Transaction): Result<Unit> {
+    suspend fun updateTransaction(transactionId: String, transaction: Transaction): Result<Unit> {
         return try {
-            transaction.id?.let { id ->
-                getUserTransactionsCollection().document(id).set(transaction).await()
-                Result.success(Unit)
-            } ?: Result.failure(Exception("Transaction ID is null"))
+            getUserTransactionsCollection().document(transactionId).set(transaction).await()
+            Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -107,11 +106,11 @@ class TransactionRepository {
                 var totalIncome = 0.0
                 var totalExpense = 0.0
                 
-                transactions.forEach { transaction ->
-                    if (transaction.amount > 0) {
-                        totalIncome += transaction.amount
+                transactions.forEach { transactionWithId ->
+                    if (transactionWithId.amount > 0) {
+                        totalIncome += transactionWithId.amount
                     } else {
-                        totalExpense += Math.abs(transaction.amount)
+                        totalExpense += Math.abs(transactionWithId.amount)
                     }
                 }
                 

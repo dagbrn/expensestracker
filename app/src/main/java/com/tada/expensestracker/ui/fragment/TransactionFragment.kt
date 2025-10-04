@@ -1,5 +1,6 @@
 package com.tada.expensestracker.ui.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +9,9 @@ import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.tada.expensestracker.data.model.Transaction
 import com.tada.expensestracker.databinding.FragmentTransactionBinding
+import com.tada.expensestracker.ui.activity.EditTransactionActivity
 import com.tada.expensestracker.ui.adapter.TransactionHistoryAdapter
 import com.tada.expensestracker.ui.viewmodel.TransactionViewModel
 import java.text.DateFormatSymbols
@@ -39,8 +42,28 @@ class TransactionFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        // Menggunakan adapter baru yang mendukung pengelompokan tanggal
-        transactionAdapter = TransactionHistoryAdapter()
+        transactionAdapter = TransactionHistoryAdapter { transaction ->
+            try {
+                // Debug log
+                android.util.Log.d("TransactionFragment", "Clicked transaction: id=${transaction.id}, type=${transaction.type}, amount=${transaction.amount}")
+                
+                // Validasi data sebelum mengirim
+                if (transaction.id == null) {
+                    android.widget.Toast.makeText(requireContext(), "Error: Transaction ID is null", android.widget.Toast.LENGTH_SHORT).show()
+                    return@TransactionHistoryAdapter
+                }
+                
+                // Mengarahkan ke EditTransactionActivity yang baru
+                val intent = Intent(requireContext(), EditTransactionActivity::class.java).apply {
+                    putExtra(EditTransactionActivity.EXTRA_TRANSACTION, transaction)
+                }
+                startActivity(intent)
+            } catch (e: Exception) {
+                android.util.Log.e("TransactionFragment", "Error opening edit activity", e)
+                android.widget.Toast.makeText(requireContext(), "Error: ${e.message}", android.widget.Toast.LENGTH_SHORT).show()
+            }
+        }
+
         binding.rvTransactions.apply {
             adapter = transactionAdapter
             layoutManager = LinearLayoutManager(context)
@@ -48,26 +71,22 @@ class TransactionFragment : Fragment() {
     }
 
     private fun setupFilterDropdowns() {
-        // Setup Month Dropdown
         val months = DateFormatSymbols().months.filter { it.isNotEmpty() }.map { it.capitalize() }
         val monthAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, months)
         binding.monthSelectorAutocomplete.setAdapter(monthAdapter)
         binding.monthSelectorAutocomplete.setText(months[viewModel.selectedMonth], false)
 
-        // Setup Year Dropdown
         val currentYear = Calendar.getInstance().get(Calendar.YEAR)
         val years = (2000..currentYear).map { it.toString() }.reversed()
         val yearAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, years)
         binding.yearSelectorAutocomplete.setAdapter(yearAdapter)
         binding.yearSelectorAutocomplete.setText(viewModel.selectedYear.toString(), false)
 
-        // Listener untuk bulan
         binding.monthSelectorAutocomplete.setOnItemClickListener { _, _, position, _ ->
             viewModel.selectedMonth = position
             viewModel.fetchTransactionsForSelectedPeriod()
         }
 
-        // Listener untuk tahun
         binding.yearSelectorAutocomplete.setOnItemClickListener { _, _, position, _ ->
             viewModel.selectedYear = years[position].toInt()
             viewModel.fetchTransactionsForSelectedPeriod()
@@ -115,5 +134,11 @@ class TransactionFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Refresh data when returning from EditTransactionActivity
+        viewModel.fetchTransactionsForSelectedPeriod()
     }
 }

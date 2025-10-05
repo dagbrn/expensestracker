@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
+    android:fillViewport="true"
+    android:clipToPadding="false"
+    android:paddingBottom="90dp"
     tools:context=".ui.fragment.ReportsFragment">
 
     <LinearLayout
@@ -58,7 +61,7 @@
                         android:layout_height="48dp"
                         android:layout_marginStart="8dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
-                        android:src="@android:drawable/ic_media_previous"
+                        android:src="@drawable/ic_arrow_left"
                         android:contentDescription="Previous Month"/>
 
                     <com.google.android.material.button.MaterialButton
@@ -78,7 +81,7 @@
                         android:layout_height="48dp"
                         android:layout_marginStart="4dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
-                        android:src="@android:drawable/ic_media_next"
+                        android:src="@drawable/ic_arrow_right"
                         android:contentDescription="Next Month"/>
 
                 </LinearLayout>
@@ -94,50 +97,11 @@
             android:orientation="horizontal"
             android:layout_marginBottom="16dp">
 
-            <!-- Total Income -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="#4CAF50">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp"
-                    android:gravity="center">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Income"
-                        android:textSize="12sp"
-                        android:textColor="@android:color/white"
-                        android:layout_marginBottom="4dp"/>
-
-                    <TextView
-                        android:id="@+id/tvTotalIncome"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Rp 0"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="@android:color/white"/>
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
             <!-- Total Expense -->
             <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginStart="8dp"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="4dp"
                 app:cardBackgroundColor="#F44336">
@@ -209,7 +173,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardCornerRadius="8dp"
-            app:cardElevation="4dp">
+            app:cardElevation="4dp"
+            android:layout_marginBottom="25dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -230,7 +195,8 @@
                     android:id="@+id/rvCategoryBreakdown"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"/>
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never"/>
 
                 <!-- Empty State -->
                 <LinearLayout
@@ -265,4 +231,4 @@
 
     </LinearLayout>
 
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

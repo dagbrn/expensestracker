@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.tada.expensestracker.R
 import com.tada.expensestracker.data.model.TransactionWithId
+import java.util.Date
 
 class TransactionAdapter(private var transactions: List<TransactionWithId>) :
     RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder>() {
@@ -16,6 +17,7 @@ class TransactionAdapter(private var transactions: List<TransactionWithId>) :
         val tvName: TextView = itemView.findViewById(R.id.tv_transaction_name)
         val tvCategory: TextView = itemView.findViewById(R.id.tv_transaction_category)
         val tvAmount: TextView = itemView.findViewById(R.id.tv_transaction_amount)
+        val tvDate: TextView = itemView.findViewById(R.id.tv_transaction_date)
         val ivCategoryIcon: ImageView = itemView.findViewById(R.id.type_icon)
     }
 
@@ -48,6 +50,7 @@ class TransactionAdapter(private var transactions: List<TransactionWithId>) :
         
         holder.tvName.text = transactionWithId.note.ifEmpty { "Transaction" }
         holder.tvCategory.text = transactionWithId.type
+        holder.tvDate.text = Date(transactionWithId.date).toString()
         holder.ivCategoryIcon.setImageResource(getCategoryIcon(transactionWithId.type))
 
         // Format amount

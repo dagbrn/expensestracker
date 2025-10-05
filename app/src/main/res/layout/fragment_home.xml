@@ -11,34 +11,27 @@
         android:padding="16dp">
 
     <!-- Date Section (Clickable) -->
-    <LinearLayout
-        android:id="@+id/ll_date_section"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="start"
-        android:padding="8dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true">
+<!--    <LinearLayout-->
+<!--        android:id="@+id/ll_date_section"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="vertical"-->
+<!--        android:layout_gravity="start"-->
+<!--        android:padding="8dp"-->
+<!--        android:background="?android:attr/selectableItemBackground"-->
+<!--        android:clickable="true"-->
+<!--        android:focusable="true">-->
 
         <TextView
             android:id="@+id/tv_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="01"
+            android:text="Wed, 01 Oct"
             android:textSize="28sp"
             android:textStyle="bold"
-            android:textColor="@android:color/black"/>
+            android:textColor="@color/primary_color"/>
 
-        <TextView
-            android:id="@+id/tv_month_year"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Oktober 2025"
-            android:textSize="14sp"
-            android:textColor="@android:color/black"/>
-    </LinearLayout>
+<!--    </LinearLayout>-->
 
     <!-- Total Balance -->
     <LinearLayout

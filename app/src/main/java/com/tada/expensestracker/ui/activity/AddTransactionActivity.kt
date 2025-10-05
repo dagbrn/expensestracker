@@ -115,6 +115,13 @@ class AddTransactionActivity : AppCompatActivity() {
         }
     }
 
+    private fun currentTime(): Long {
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
+        val second = calendar.get(Calendar.SECOND)
+        return (hour * 3600 + minute * 60 + second).toLong()
+    }
+
     private fun setupSaveButton() {
         btnSave.setOnClickListener {
             saveTransaction()
@@ -159,7 +166,7 @@ class AddTransactionActivity : AppCompatActivity() {
                 type = category,
                 amount = amount,
                 note = note,
-                date = date
+                date = date + currentTime()
             )
 
             // Save to Firebase

@@ -12,9 +12,7 @@ import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class TransactionViewModel : ViewModel() {
-
     private val repository = TransactionRepository()
-
     private val _transactions = MutableLiveData<List<TransactionWithId>?>()
     val transactions: LiveData<List<TransactionWithId>?> = _transactions
 

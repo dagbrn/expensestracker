@@ -15,8 +15,8 @@ class TransactionViewModel : ViewModel() {
 
     private val repository = TransactionRepository()
 
-    private val _transactions = MutableLiveData<List<TransactionWithId>?>()
-    val transactions: LiveData<List<TransactionWithId>?> = _transactions
+    private val _transactions = MutableLiveData<List<Transaction>?>()
+    val transactions: LiveData<List<Transaction>?> = _transactions
 
     // Menyimpan bulan dan tahun yang sedang dipilih
     var selectedMonth: Int = 0
@@ -35,10 +35,45 @@ class TransactionViewModel : ViewModel() {
             _transactions.postValue(null) // Tampilkan loading
             val result = repository.getTransactionsByMonth(selectedMonth, selectedYear)
             if (result.isSuccess) {
-                _transactions.postValue(result.getOrNull())
+                val transactionsWithId = result.getOrNull() ?: emptyList()
+                // Convert TransactionWithId to Transaction with id
+                val transactions = transactionsWithId.map { transactionWithId ->
+                    Transaction(
+                        id = transactionWithId.id,
+                        type = transactionWithId.type,
+                        amount = transactionWithId.amount,
+                        note = transactionWithId.note,
+                        date = transactionWithId.date
+                    )
+                }
+                _transactions.postValue(transactions)
             } else {
                 Log.e("TransactionViewModel", "Error fetching transactions", result.exceptionOrNull())
                 _transactions.postValue(emptyList())
+            }
+        }
+    }
+
+    fun updateTransaction(transaction: Transaction) {
+        viewModelScope.launch {
+            transaction.id?.let { id ->
+                val result = repository.updateTransaction(id, transaction)
+                if (result.isSuccess) {
+                    fetchTransactionsForSelectedPeriod() // Refresh data
+                } else {
+                    Log.e("TransactionViewModel", "Error updating transaction", result.exceptionOrNull())
+                }
+            }
+        }
+    }
+
+    fun deleteTransaction(transactionId: String) {
+        viewModelScope.launch {
+            val result = repository.deleteTransaction(transactionId)
+            if (result.isSuccess) {
+                fetchTransactionsForSelectedPeriod() // Refresh data
+            } else {
+                Log.e("TransactionViewModel", "Error deleting transaction", result.exceptionOrNull())
             }
         }
     }

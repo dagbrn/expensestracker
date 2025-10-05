@@ -5,6 +5,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.tada.expensestracker.data.model.Transaction
 import com.tada.expensestracker.data.model.TransactionWithId
+import com.tada.expensestracker.data.model.CategoryData
+import com.tada.expensestracker.data.model.ReportsData
 import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
 import java.util.*
@@ -121,6 +123,83 @@ class TransactionRepository {
             }
         } catch (e: Exception) {
             Result.failure(e)
+        }
+    }
+    
+    // Get reports data with category breakdown
+    suspend fun getReportsData(month: Int, year: Int): Result<ReportsData> {
+        return try {
+            val transactionsResult = getTransactionsByMonth(month, year)
+            if (transactionsResult.isSuccess) {
+                val transactions = transactionsResult.getOrNull() ?: emptyList()
+                
+                // Separate income and expense
+                val incomeTransactions = transactions.filter { it.amount > 0 }
+                val expenseTransactions = transactions.filter { it.amount < 0 }
+                
+                // Calculate totals
+                val totalIncome = incomeTransactions.sumOf { it.amount }
+                val totalExpense = expenseTransactions.sumOf { Math.abs(it.amount) }
+                val balance = totalIncome - totalExpense
+                
+                // Group expenses by category
+                val expenseByCategory = expenseTransactions
+                    .groupBy { it.type }
+                    .map { (category, transactions) ->
+                        val categoryTotal = transactions.sumOf { Math.abs(it.amount) }
+                        val percentage = if (totalExpense > 0) {
+                            (categoryTotal / totalExpense * 100).toFloat()
+                        } else 0f
+                        
+                        CategoryData(
+                            categoryName = category,
+                            totalAmount = categoryTotal,
+                            transactionCount = transactions.size,
+                            percentage = percentage,
+                            color = getCategoryColor(category)
+                        )
+                    }
+                    .sortedByDescending { it.totalAmount }
+                
+                // Create income data
+                val incomeData = CategoryData(
+                    categoryName = "Income",
+                    totalAmount = totalIncome,
+                    transactionCount = incomeTransactions.size,
+                    percentage = if (totalIncome + totalExpense > 0) {
+                        (totalIncome / (totalIncome + totalExpense) * 100).toFloat()
+                    } else 0f,
+                    color = android.graphics.Color.parseColor("#4CAF50")
+                )
+                
+                val reportsData = ReportsData(
+                    totalIncome = totalIncome,
+                    totalExpense = totalExpense,
+                    balance = balance,
+                    expenseCategories = expenseByCategory,
+                    incomeData = incomeData
+                )
+                
+                Result.success(reportsData)
+            } else {
+                Result.failure(transactionsResult.exceptionOrNull() ?: Exception("Unknown error"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    
+    private fun getCategoryColor(category: String): Int {
+        return when (category.lowercase()) {
+            "makanan" -> android.graphics.Color.parseColor("#FF5722")
+            "transportasi" -> android.graphics.Color.parseColor("#2196F3")
+            "hiburan" -> android.graphics.Color.parseColor("#9C27B0")
+            "kesehatan" -> android.graphics.Color.parseColor("#FF9800")
+            "belanja" -> android.graphics.Color.parseColor("#E91E63")
+            "tagihan" -> android.graphics.Color.parseColor("#607D8B")
+            "pendidikan" -> android.graphics.Color.parseColor("#3F51B5")
+            "kebutuhan" -> android.graphics.Color.parseColor("#795548")
+            else -> android.graphics.Color.parseColor("#9E9E9E")
         }
     }
 }

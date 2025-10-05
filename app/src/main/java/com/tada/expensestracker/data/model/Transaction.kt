@@ -23,3 +23,20 @@ data class TransactionWithId(
     val note: String get() = transaction.note
     val date: Long get() = transaction.date
 }
+
+// Models untuk Reports
+data class CategoryData(
+    val categoryName: String,
+    val totalAmount: Double,
+    val transactionCount: Int,
+    val percentage: Float,
+    val color: Int = 0
+)
+
+data class ReportsData(
+    val totalIncome: Double,
+    val totalExpense: Double,
+    val balance: Double,
+    val expenseCategories: List<CategoryData>,
+    val incomeData: CategoryData
+)

@@ -104,7 +104,8 @@
                 android:layout_weight="1"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="4dp"
-                app:cardBackgroundColor="#F44336">
+                app:cardBackgroundColor="#FFE8E8"
+                app:strokeColor="#FFCDD2">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -118,7 +119,7 @@
                         android:layout_height="wrap_content"
                         android:text="Expense"
                         android:textSize="12sp"
-                        android:textColor="@android:color/white"
+                        android:textColor="@android:color/darker_gray"
                         android:layout_marginBottom="4dp"/>
 
                     <TextView
@@ -128,7 +129,7 @@
                         android:text="Rp 0"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        android:textColor="@android:color/white"/>
+                        android:textColor="@android:color/holo_red_dark"/>
 
                 </LinearLayout>
 

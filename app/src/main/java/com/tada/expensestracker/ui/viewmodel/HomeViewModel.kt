@@ -38,7 +38,8 @@ class HomeViewModel(private val repository: TransactionRepository) : ViewModel()
             val result = repository.getTransactionsByMonth(month, year)
             if (result.isSuccess) {
                 val data = result.getOrNull().orEmpty()
-                _transaction.value = data
+                val limittedData = data.take(6)
+                _transaction.value = limittedData
                 calculateSummary(data)
             }
         }

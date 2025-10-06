@@ -13,8 +13,8 @@ import java.util.Calendar
 
 class TransactionViewModel : ViewModel() {
     private val repository = TransactionRepository()
-    private val _transactions = MutableLiveData<List<TransactionWithId>?>()
-    val transactions: LiveData<List<TransactionWithId>?> = _transactions
+    private val _transactions = MutableLiveData<List<Transaction>?>()
+    val transactions: LiveData<List<Transaction>?> = _transactions
 
     // Menyimpan bulan dan tahun yang sedang dipilih
     var selectedMonth: Int = 0

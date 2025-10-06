@@ -91,7 +91,7 @@ class ReportsFragment : Fragment() {
             
             // Center text
             setDrawCenterText(true)
-            setCenterTextSize(14f)  // ✅ FIXED: Use setCenterTextSize() method
+            setCenterTextSize(14f)
             setCenterTextColor(Color.BLACK)
             
             // Legend

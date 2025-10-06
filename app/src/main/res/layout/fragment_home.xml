@@ -10,18 +10,6 @@
         android:layout_height="match_parent"
         android:padding="16dp">
 
-    <!-- Date Section (Clickable) -->
-<!--    <LinearLayout-->
-<!--        android:id="@+id/ll_date_section"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:orientation="vertical"-->
-<!--        android:layout_gravity="start"-->
-<!--        android:padding="8dp"-->
-<!--        android:background="?android:attr/selectableItemBackground"-->
-<!--        android:clickable="true"-->
-<!--        android:focusable="true">-->
-
         <TextView
             android:id="@+id/tv_date"
             android:layout_width="wrap_content"
@@ -29,9 +17,7 @@
             android:text="Wed, 01 Oct"
             android:textSize="28sp"
             android:textStyle="bold"
-            android:textColor="@color/primary_color"/>
-
-<!--    </LinearLayout>-->
+            android:textColor="?attr/colorPrimary"/>
 
     <!-- Total Balance -->
     <LinearLayout
@@ -128,25 +114,24 @@
                 android:textStyle="bold"
                 android:layout_marginTop="4dp"/>
         </LinearLayout>
+
     </LinearLayout>
-
     <!-- Recent Transactions -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Recent Transactions"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="12dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Recent Transactions"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="12dp"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_recent_transactions"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:nestedScrollingEnabled="false"/>
-
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_recent_transactions"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:nestedScrollingEnabled="false"/>
     </LinearLayout>
 
     <!-- Floating Action Button -->
@@ -159,6 +144,6 @@
         android:layout_marginBottom="120dp"
         android:src="@drawable/ic_add"
         app:tint="@android:color/white"
-        app:backgroundTint="@color/primary_color"/>
+        app:backgroundTint="?attr/colorPrimary"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

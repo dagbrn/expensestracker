@@ -49,10 +49,10 @@ class MainActivity : AppCompatActivity() {
                     replaceFragment(ReportsFragment())
                     true
                 }
-                R.id.nav_settings -> {
-                    replaceFragment(SettingsFragment())
-                    true
-                }
+//                R.id.nav_settings -> {
+//                    replaceFragment(SettingsFragment())
+//                    true
+//                }
                 else -> false
             }
         }

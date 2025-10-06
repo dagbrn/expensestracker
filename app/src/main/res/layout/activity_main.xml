@@ -23,6 +23,7 @@
         app:labelVisibilityMode="labeled"
         app:itemIconTint="@color/black"
         app:itemTextColor="@color/black"
+        app:itemRippleColor="?attr/colorPrimary"
         android:background="?android:attr/windowBackground"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
